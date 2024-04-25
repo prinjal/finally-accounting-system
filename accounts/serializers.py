@@ -10,9 +10,19 @@ class AccountSerializer(serializers.ModelSerializer):
         fields = ['id', 'account_number', 'current_balance', 'user']
 
 class TransactionSerializer(serializers.ModelSerializer):
+    account = AccountSerializer(read_only=True)
+    account__id = serializers.SerializerMethodField()
+    account__account_number = serializers.SerializerMethodField()
+
     class Meta:
         model = Transaction
-        fields = ['id', 'date', 'transaction_type', 'note', 'amount', 'account']
+        fields = ['id', 'date', 'transaction_type', 'note', 'amount', 'account','account__id','account__account_number']
+
+    def get_account__id(self, obj):
+        return obj.account.id if obj.account else None
+
+    def get_account__account_number(self, obj):
+        return obj.account.account_number if obj.account else None
     def create(self, validated_data):
         transaction_type = validated_data.get('transaction_type')
         amount = validated_data.get('amount')
