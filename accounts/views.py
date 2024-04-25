@@ -7,9 +7,6 @@ from django.db.models import Sum, Q
 from rest_framework.decorators import action
 from django.http import JsonResponse
 
-class AccountViewSet(viewsets.ModelViewSet):
-    queryset = Account.objects.all()
-    serializer_class = AccountSerializer
 
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()

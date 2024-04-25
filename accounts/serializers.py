@@ -1,8 +1,5 @@
-from rest_framework import viewsets, status
 from rest_framework import serializers
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from .models import Account, Transaction
+from .models import Transaction, Account
 
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,28 +8,23 @@ class AccountSerializer(serializers.ModelSerializer):
 
 class TransactionSerializer(serializers.ModelSerializer):
     account = AccountSerializer(read_only=True)
-    account__id = serializers.SerializerMethodField()
-    account__account_number = serializers.SerializerMethodField()
+    account_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Transaction
-        fields = ['id', 'date', 'transaction_type', 'note', 'amount', 'account','account__id','account__account_number']
-
-    def get_account__id(self, obj):
-        return obj.account.id if obj.account else None
-
-    def get_account__account_number(self, obj):
-        return obj.account.account_number if obj.account else None
+        fields = ['id', 'date', 'transaction_type', 'note', 'amount', 'account', 'account_id']
+    
     def create(self, validated_data):
-        transaction_type = validated_data.get('transaction_type')
-        amount = validated_data.get('amount')
-        account = validated_data.get('account')
+        account_id = validated_data.pop('account_id')
+        account = Account.objects.get(pk=account_id)
+        
+        transaction = Transaction.objects.create(account=account, **validated_data)
 
-        if transaction_type == 'CREDIT':
-            account.current_balance += amount
-        elif transaction_type == 'DEBIT':
-            account.current_balance -= amount
-
+        # Update the account's balance based on the transaction type
+        if validated_data['transaction_type'] == 'CREDIT':
+            account.current_balance += validated_data['amount']
+        elif validated_data['transaction_type'] == 'DEBIT':
+            account.current_balance -= validated_data['amount']
         account.save()
-        transaction = Transaction.objects.create(**validated_data)
+
         return transaction
