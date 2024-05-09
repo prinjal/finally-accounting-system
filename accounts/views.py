@@ -2,14 +2,26 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Account, Transaction
-from .serializers import AccountSerializer, TransactionSerializer, UserSerializer
-from django.db.models import Sum, Q
+from .serializers import AccountSerializer, LoginSerializer, TransactionSerializer, UserSerializer
+from django.db.models import Sum
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from django.contrib.auth.models import User
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class LoginAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data
+            return Response({'message': 'Login successful', 'user_id': user.id})
+        return Response(serializer.errors, status=400)
 
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
