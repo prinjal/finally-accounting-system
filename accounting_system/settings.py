@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import sys
+import sys, os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -85,15 +88,22 @@ WSGI_APPLICATION = 'accounting_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-running_tests = 'test' in sys.argv
+ENVIRONMENT = os.getenv('DJANGO_ENVIRONMENT', 'docker')
+if ENVIRONMENT=="test" or ENVIRONMENT=="local":
+    DB_HOST='localhost'
+    DB_PASSWORD='pm07111996'
+else:
+    DB_HOST = 'db'
+    DB_PASSWORD ='root'
+    
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'accounting',
         'USER': 'root',
-        'PASSWORD': 'root' if not running_tests else 'pm07111996',
-        'HOST': 'db' if not running_tests else 'localhost',
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
         'PORT': '3306',
     }
 }
@@ -103,7 +113,7 @@ DATABASES = {
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        # 'rest_framework.renderers.BrowsableAPIRenderer',  # Add this if you want the browsable API
+        'rest_framework.renderers.BrowsableAPIRenderer',  # Add this if you want the browsable API
     ],
 }
 
