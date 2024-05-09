@@ -2,11 +2,14 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Account, Transaction
-from .serializers import AccountSerializer, TransactionSerializer
+from .serializers import AccountSerializer, TransactionSerializer, UserSerializer
 from django.db.models import Sum, Q
 from rest_framework.decorators import action
-from django.http import JsonResponse
+from django.contrib.auth.models import User
 
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()

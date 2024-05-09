@@ -2,9 +2,10 @@
 
 from django.urls import path, include
 from rest_framework_nested import routers
-from .views import AccountViewSet, TransactionViewSet
+from .views import AccountViewSet, TransactionViewSet, UserViewSet
 
 router = routers.DefaultRouter()
+router.register(r'users',UserViewSet)
 router.register(r'accounts', AccountViewSet)
 router.register(r'transactions', TransactionViewSet)
 
