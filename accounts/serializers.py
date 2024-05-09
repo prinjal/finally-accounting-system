@@ -8,14 +8,13 @@ class AccountSerializer(serializers.ModelSerializer):
 
 class TransactionSerializer(serializers.ModelSerializer):
     account = AccountSerializer(read_only=True)
-    account_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Transaction
-        fields = ['id', 'date', 'transaction_type', 'note', 'amount', 'account', 'account_id']
+        fields = ['id', 'date', 'transaction_type', 'note', 'amount', 'account']
     
     def create(self, validated_data):
-        account_id = validated_data.pop('account_id')
+        account_id=self.context.get('account_id')
         account = Account.objects.get(pk=account_id)
         
         transaction = Transaction.objects.create(account=account, **validated_data)

@@ -12,12 +12,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
-class TransactionsByAccountView(APIView):
-    def get(self, request, account_id):
-        transactions = Transaction.objects.filter(account__id=account_id)
-        serializer = TransactionSerializer(transactions, many=True)
-        print(serializer.data)
-        return Response(serializer.data)
+    def get_serializer_context(self):
+        return {'account_id':self.kwargs['account_pk']}
     
 
 class AccountViewSet(viewsets.ModelViewSet):

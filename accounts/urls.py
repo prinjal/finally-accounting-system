@@ -1,14 +1,16 @@
 # accounts/urls.py
 
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import AccountViewSet, TransactionViewSet, TransactionsByAccountView
+from rest_framework_nested import routers
+from .views import AccountViewSet, TransactionViewSet
 
-router = DefaultRouter()
+router = routers.DefaultRouter()
 router.register(r'accounts', AccountViewSet)
-router.register(r'transactions', TransactionViewSet)
+
+accounts_router=routers.NestedDefaultRouter(router,r'accounts',lookup='account')
+accounts_router.register(r'transactions',TransactionViewSet,basename='transactions-by-account')
 
 urlpatterns = [
-    path('transactions/<int:account_id>/', TransactionsByAccountView.as_view(), name='transactions-by-account'),
     path('', include(router.urls)),
+    path('', include(accounts_router.urls)),
 ]
