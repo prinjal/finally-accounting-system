@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 class Account(models.Model):
     account_number = models.CharField(max_length=16, unique=True)
     current_balance = models.DecimalField(max_digits=14, decimal_places=2)
-    user = models.DecimalField(max_digits=14, decimal_places=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accounts')
     def __str__(self) -> str:
         return self.account_number
 
