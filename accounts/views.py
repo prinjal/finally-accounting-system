@@ -12,8 +12,15 @@ class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
+    def get_queryset(self):
+        if 'account_pk' in self.kwargs:
+            return Transaction.objects.filter(account_id=self.kwargs['account_pk'])
+        else:
+            return Transaction.objects.all()
+
     def get_serializer_context(self):
-        return {'account_id':self.kwargs['account_pk']}
+        if 'account_pk' in self.kwargs:
+            return {'account_id':self.kwargs['account_pk']}
     
 
 class AccountViewSet(viewsets.ModelViewSet):

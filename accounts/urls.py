@@ -6,6 +6,7 @@ from .views import AccountViewSet, TransactionViewSet
 
 router = routers.DefaultRouter()
 router.register(r'accounts', AccountViewSet)
+router.register(r'transactions', TransactionViewSet)
 
 accounts_router=routers.NestedDefaultRouter(router,r'accounts',lookup='account')
 accounts_router.register(r'transactions',TransactionViewSet,basename='transactions-by-account')
