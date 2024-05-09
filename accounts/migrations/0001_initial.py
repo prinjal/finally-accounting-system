@@ -9,7 +9,7 @@ def add_account_and_transaction_data(apps, schema_editor):
     Account = apps.get_model('accounts', 'Account')
     Transaction = apps.get_model('accounts', 'Transaction')
     
-    user = User.objects.create_user(username='admin', password='admin')
+    user = User.objects.create_superuser(username='admin', password='admin')
     # Create an account with a numeric value (assuming purpose, e.g., score or calculation)
     account = Account.objects.create(account_number='100000000000014', current_balance=100000.00, user=user)
 
