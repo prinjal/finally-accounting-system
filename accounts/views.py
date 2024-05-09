@@ -7,6 +7,7 @@ from django.db.models import Sum
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from django.contrib.auth.models import User
+from rest_framework.exceptions import MethodNotAllowed
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -26,6 +27,16 @@ class LoginAPIView(APIView):
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+
+    def create(self, request, *args, **kwargs):
+        if 'account_pk' not in self.kwargs:
+            raise MethodNotAllowed("POST", detail="Cannot create transaction without an account context, use /api/accounts/:accountId/transactions")
+        return super().create(request, *args, **kwargs)
+
+    def get_http_method_names(self):
+        if 'account_pk' in self.kwargs:
+            return ['get', 'post', 'put', 'patch', 'delete']
+        return ['get']
 
     def get_queryset(self):
         if 'account_pk' in self.kwargs:
