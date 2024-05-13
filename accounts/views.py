@@ -8,13 +8,15 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from django.contrib.auth.models import User
 from rest_framework.exceptions import MethodNotAllowed
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-
-class LoginAPIView(APIView):
+class LoginAPIView(TokenObtainPairView):
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -27,6 +29,8 @@ class LoginAPIView(APIView):
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         if 'account_pk' not in self.kwargs:
@@ -52,6 +56,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
 class AccountViewSet(viewsets.ModelViewSet):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['get'])
     def balance_on_date(self, request, pk=None):
