@@ -87,26 +87,23 @@ WSGI_APPLICATION = 'accounting_system.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-ENVIRONMENT = os.getenv('DJANGO_ENVIRONMENT', 'docker')
-if ENVIRONMENT=="test" or ENVIRONMENT=="local":
-    DB_HOST='localhost'
-    DB_PASSWORD='pm07111996'
-else:
-    DB_HOST = 'db'
-    DB_PASSWORD ='root'
     
+
+
+DB_HOST=os.getenv('SQL_HOST')
+DB_PASSWORD=os.getenv('PASSWORD')
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'accounting',
         'USER': 'root',
-        'PASSWORD': DB_PASSWORD,
+        'PASSWORD': DB_PASSWORD,  # Ensure this is securely managed
         'HOST': DB_HOST,
-        'PORT': '3306',
+        'PORT': '5432',
     }
 }
+
 
 
 
