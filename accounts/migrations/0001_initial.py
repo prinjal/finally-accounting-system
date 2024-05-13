@@ -18,6 +18,10 @@ def add_account_and_transaction_data(apps, schema_editor):
     Transaction.objects.create(date='2024-03-10', transaction_type='DEBIT', note='Initial credit', amount=200.00, account=account)
     Transaction.objects.create(date='2024-05-12', transaction_type='CREDIT', note='Initial credit', amount=700.00, account=account)
 
+    otherAccount = Account.objects.create(account_number='100000000000022', current_balance=250000.00, user=user)
+    Transaction.objects.create(date='2024-01-10', transaction_type='CREDIT', note='Initial credit', amount=200.00, account=otherAccount)
+    Transaction.objects.create(date='2024-05-12', transaction_type='CREDIT', note='Initial credit', amount=300.00, account=otherAccount)
+
 
 
 class Migration(migrations.Migration):
